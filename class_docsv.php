@@ -99,6 +99,7 @@ class doCSV {
             $rows[] = $data;
             if($currentRowsRead >= $this->maxNumberOfRowsToRead){
                $this->insertRowsIntoDatabase($rows);
+               $currentRowsRead = 0;
                $rows = array();
             }
          }
