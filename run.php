@@ -9,10 +9,8 @@
  */
 
 require 'class_docsv.php';
-require 'load_laravel.php';
 
 $project = new doCSV();
-
 $project->runJob(
     null, /* we don't have a real job, there is nothing to delete...*/
     array (

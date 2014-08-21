@@ -1,9 +1,13 @@
 <?php
 
 class doCSV {
+   // Attempts of downloading the csv file
    private $maxDownloadTries = 10;
+   // holds the current attempts to download the csv file
    private $currentTries = 0;
-   private $maxNumberOfRowsToRead = 100;
+   //Numbers of rows to read before inserting them in database
+   private $maxNumberOfRowsToRead = 500;
+
    /**
     * This is the job that will be launched by the Laravel queue...
     *
@@ -93,22 +97,50 @@ class doCSV {
    {
       $currentRowsRead = 0;
       $rows = array();
+      $isFirstRow = true;
       if (($handle = fopen($file, "r")) !== FALSE) {
          while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            //Skip first row
+            if($isFirstRow){
+               $isFirstRow = false;            
+               continue;
+            }
+
             $currentRowsRead++;
-            $rows[] = $data;
+            $tableRow = array(
+               'clientId' => $clientID,
+               'targetURL' => $data[0],
+               'sourceURL' => $data[1],
+               'anchorText' => $data[2],
+               'sourceCrawlDate' => $data[3],
+               'sourceFirstFoundDate' => $data[4],
+               'flagNoFollow' => $data[5],
+               'flagImageLink' => $data[6],
+               'flagRedirect' => $data[7],
+               'flagFrame' => $data[8],
+               'flagOldCrawl' => $data[9],
+               'flagAltText' => $data[10],
+               'flagMention' => $data[11],
+               'sourceCitationFlow' => $data[12],
+               'sourceTrustFlow' => $data[13],
+               'targetCitationFlow' => $data[14],
+               'targetTrustFlow' => $data[15],
+               'sourceTopicalTrustFlowTopic0' => $data[16],
+               'sourceTopicalTrustFlowValue0' => $data[17],
+               'refDomainTopicalTrustFlowTopic0' => $data[18],
+               'refDomainTopicalTrustFlowValue0' => $data[19]
+            );
+            $rows[] = $tableRow;
             if($currentRowsRead >= $this->maxNumberOfRowsToRead){
-               $this->insertRowsIntoDatabase($rows);
+               DB::table('crawler')->insert(
+                  $rows
+               );
                $currentRowsRead = 0;
                $rows = array();
             }
          }
          fclose($handle);
       } 
-   }
-
-   private function insertRowsIntoDatabase(array $rows)
-   {
    }
 
    /**
