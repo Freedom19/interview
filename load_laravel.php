@@ -1,6 +1,6 @@
 <?php
 
-$path = '/path/to/root/of/laravel';
+$path = __DIR__.'/laravel';
 $config = require $path . '/app/config/database.php';
 
 require $path . '/vendor/autoload.php';
