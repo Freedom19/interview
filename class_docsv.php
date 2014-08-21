@@ -1,6 +1,8 @@
 <?php
 
 class doCSV {
+   private $maxDownloadTries = 3;
+   private $currentTry = 0;
     /**
      * This is the job that will be launched by the Laravel queue...
      *
