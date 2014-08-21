@@ -3,6 +3,7 @@
 class doCSV {
    private $maxDownloadTries = 10;
    private $currentTries = 0;
+   private $maxNumberOfRowsToRead = 100;
    /**
     * This is the job that will be launched by the Laravel queue...
     *
@@ -16,6 +17,7 @@ class doCSV {
       $clientID = (int) $data['client'];
       $file = null;
       $tryDownloadFile = true;
+      $extractedFilePath = __DIR__.'/batch_of_urls.csv';
 
       while($tryDownloadFile){
          try{
@@ -28,8 +30,8 @@ class doCSV {
             }
          }
       }
-      $this->extractGzipFile($file, __DIR__.'/batch_of_urls.csv');
-      $success = $this->insertCSVIntoDatabase($clientID, $file);
+      $this->extractGzipFile($file, $extractedFilePath);
+      $success = $this->insertCSVIntoDatabase($clientID, $extractedFilePath);
    }
 
    /**
@@ -41,7 +43,7 @@ class doCSV {
     * @param int    $chunkSize Size of chunks that get read every loop
     *
     */
-   private function extractGzipFile($src, $dst, $chunkSize = 4096)
+   private function extractGzipFile($src, $dst, $chunkSize = 20000)
    {
       if($src === '' OR $src === NULL OR $dst === '' OR $dst === NULL)
          return false;
@@ -89,7 +91,23 @@ class doCSV {
     */
    private function insertCSVIntoDatabase($clientID, $file)
    {
-      throw new Exception("There was an error importing the CSV file into the database.");
+      $currentRowsRead = 0;
+      $rows = array();
+      if (($handle = fopen($file, "r")) !== FALSE) {
+         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            $currentRowsRead++;
+            $rows[] = $data;
+            if($currentRowsRead >= $this->maxNumberOfRowsToRead){
+               $this->insertRowsIntoDatabase($rows);
+               $rows = array();
+            }
+         }
+         fclose($handle);
+      } 
+   }
+
+   private function insertRowsIntoDatabase(array $rows)
+   {
    }
 
    /**

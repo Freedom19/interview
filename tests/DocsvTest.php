@@ -9,7 +9,7 @@ class DocsvTest extends TestCase {
       $project = new doCSV();
    }
 
-   public function testDownloadCSV()
+   public function testRunJob()
    {
       if(file_exists('batch_of_urls.csv')){
          unlink('batch_of_urls.csv');
