@@ -7,6 +7,7 @@ class doCSV {
    private $currentTries = 0;
    //Numbers of rows to read before inserting them in database
    private $maxNumberOfRowsToRead = 500;
+   private $secBeforeTryDownloadAgain = 3;
 
    /**
     * This is the job that will be launched by the Laravel queue...
@@ -31,6 +32,8 @@ class doCSV {
             $this->currentTries++;
             if($this->currentTries >= $this->maxDownloadTries){
                $tryDownloadFile = false; 
+            }else{
+               sleep($this->secBeforeTryDownloadAgain);
             }
          }
       }
