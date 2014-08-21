@@ -21,12 +21,6 @@ class DocsvTest extends TestCase {
          $project->runJob(null,$data);
          $project->runJob(null,$data);
          $project->runJob(null,$data);
-         $project->runJob(null,$data);
-         $project->runJob(null,$data);
-         $project->runJob(null,$data);
-         $project->runJob(null,$data);
-         $project->runJob(null,$data);
-         $project->runJob(null,$data);
 
       }catch(Exception $ex){
          $this->assertNotEquals('Could not pretend to download file', $ex->getMessage());

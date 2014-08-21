@@ -1,3 +1,4 @@
 /laravel
 *.swp
 batch_of_urls.csv.gz
+batch_of_urls.csv

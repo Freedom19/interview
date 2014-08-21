@@ -20,6 +20,7 @@ class doCSV {
       while($tryDownloadFile){
          try{
             $file = $this->downloadCSV($downloadUrl);
+            $tryDownloadFile = false; 
          }catch(Exception $ex){
             $this->currentTries++;
             if($this->currentTries >= $this->maxDownloadTries){
@@ -27,7 +28,6 @@ class doCSV {
             }
          }
       }
-
       $this->extractGzipFile($file, __DIR__.'/batch_of_urls.csv');
       $success = $this->insertCSVIntoDatabase($clientID, $file);
    }
@@ -103,7 +103,7 @@ class doCSV {
     */
    private function downloadCSV($downloadUrl)
    {
-      $test = round(rand(1, 6));
+      $test = rand(1, 6);
       echo $test;
 
       // We are going to throw a random exception sometimes...
@@ -116,6 +116,8 @@ class doCSV {
       if (!file_exists($_file)) {
          throw new Exception("Oh noes, it looks like your CSV file is missing");
       }
+
+      return $_file;
    }
 
 }
