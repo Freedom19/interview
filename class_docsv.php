@@ -1,8 +1,6 @@
 <?php
 
 class doCSV {
-   private $maxDownloadTries = 3;
-   private $currentTry = 0;
     /**
      * This is the job that will be launched by the Laravel queue...
      *
@@ -14,10 +12,12 @@ class doCSV {
     {
         $downloadUrl = $data['url'];
         $clientID = (int) $data['client'];
-
-        $file = $this->downloadCSV($downloadUrl);
-
-        $success = $this->insertCSVIntoDatabase($clientID, $file);
+        try{
+           $file = $this->downloadCSV($downloadUrl);
+           $success = $this->insertCSVIntoDatabase($clientID, $file);
+        }catch(Exception $ex){
+           return false;
+        }
     }
 
     /**
